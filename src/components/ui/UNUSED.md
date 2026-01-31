@@ -1,7 +1,10 @@
-# UI inventory
+# UI inventory (unused)
 
-Estos componentes de `/_ingest/figma-template/components/ui` no se usan todavía.
-Se conservaron como referencia y se irán migrando según haga falta:
+Auditoría realizada sobre `/src` buscando imports que contengan:
+`@/components/ui`, `@/components/ui-kit`, `/_ingest/figma-template/components/ui`
+o cualquier ruta con `components/ui`. Resultado: **0 imports encontrados**.
+
+Catálogo actual (en `/_ingest/figma-template/components/ui`):
 
 - accordion.tsx
 - alert-dialog.tsx

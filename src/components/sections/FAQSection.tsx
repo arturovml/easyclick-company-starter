@@ -2,29 +2,39 @@
 
 import { useState } from "react";
 
-import { siteContent } from "@/content/site";
+import type { FaqItem, SectionContent, SectionItem } from "@/content/types";
 
-export function FAQSection() {
+type FAQSectionProps = {
+  section: SectionContent;
+};
+
+const isFaq = (item: SectionItem): item is FaqItem =>
+  item.kind === "faq";
+
+export function FAQSection({ section }: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { faq } = siteContent;
+  const items = section.items ?? [];
+  const faqs = items.filter(isFaq);
 
   return (
     <section className="py-24 lg:py-32 border-t border-zinc-800/50">
       <div className="max-w-[900px] mx-auto px-6 lg:px-12">
         <div className="mb-16">
-          <div className="text-xs text-zinc-500 tracking-wider uppercase mb-4">
-            {faq.eyebrow}
-          </div>
+          {section.subheading ? (
+            <div className="text-xs text-zinc-500 tracking-wider uppercase mb-4">
+              {section.subheading}
+            </div>
+          ) : null}
           <h2 className="text-4xl lg:text-5xl tracking-tight mb-6">
-            {faq.title}
+            {section.heading}
           </h2>
           <p className="text-lg text-zinc-400 leading-relaxed">
-            {faq.description}
+            {section.body}
           </p>
         </div>
 
         <div className="space-y-4">
-          {faq.items.map((item, i) => {
+          {faqs.map((item, i) => {
             const isOpen = openIndex === i;
             return (
               <div

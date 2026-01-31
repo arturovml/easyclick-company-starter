@@ -3,29 +3,27 @@ import Link from "next/link";
 import { siteContent } from "@/content/site";
 
 const footerLinks = {
-  services: [
-    { label: "Riesgo crediticio", href: "/servicios" },
-    { label: "Financiamiento de dispositivos", href: "/servicios" },
-    { label: "Cobranza", href: "/servicios" },
-    { label: "Reportería", href: "/servicios" },
-  ],
-  company: [
-    { label: "Nosotros", href: "/nosotros" },
-    { label: "Casos de uso", href: "/servicios" },
-    { label: "Documentación", href: "/servicios" },
-    { label: "Contacto", href: "/contacto" },
-  ],
-  legal: [
-    { label: "Términos de servicio", href: "/legal" },
-    { label: "Privacidad", href: "/legal" },
-    { label: "Seguridad", href: "/legal" },
-    { label: "Cumplimiento", href: "/legal" },
-  ],
-  social: [
-    { label: "LinkedIn", href: "#" },
-    { label: "Twitter", href: "#" },
-    { label: "GitHub", href: "#" },
-  ],
+  services: siteContent.footer.services.map((label) => ({
+    label,
+    href: "/servicios",
+  })),
+  company: siteContent.footer.company.map((label) => ({
+    label,
+    href:
+      label.toLowerCase() === "contacto"
+        ? "/contacto"
+        : label.toLowerCase() === "nosotros"
+          ? "/nosotros"
+          : "/servicios",
+  })),
+  legal: siteContent.footer.legal.map((label) => ({
+    label,
+    href: "/legal",
+  })),
+  social: siteContent.footer.social.map((label) => ({
+    label,
+    href: "#",
+  })),
 } as const;
 
 export function SiteFooter() {
@@ -36,7 +34,7 @@ export function SiteFooter() {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-9 h-9 bg-gradient-to-br from-zinc-100 to-zinc-400 rounded-sm" />
-              <span className="text-xl tracking-tight">{siteContent.brand.name}</span>
+              <span className="text-xl tracking-tight">{siteContent.siteName}</span>
             </div>
             <p className="text-sm text-zinc-400 leading-relaxed">
               {siteContent.brand.description}
@@ -44,7 +42,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h3 className="text-sm mb-4">Servicios</h3>
+            <h3 className="text-sm mb-4">{siteContent.footer.headings.services}</h3>
             <ul className="space-y-3">
               {footerLinks.services.map((item) => (
                 <li key={item.label}>
@@ -60,7 +58,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h3 className="text-sm mb-4">Empresa</h3>
+            <h3 className="text-sm mb-4">{siteContent.footer.headings.company}</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((item) => (
                 <li key={item.label}>
@@ -76,7 +74,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h3 className="text-sm mb-4">Legal</h3>
+            <h3 className="text-sm mb-4">{siteContent.footer.headings.legal}</h3>
             <ul className="space-y-3">
               {footerLinks.legal.map((item) => (
                 <li key={item.label}>

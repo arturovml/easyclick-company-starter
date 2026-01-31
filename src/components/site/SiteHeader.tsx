@@ -9,7 +9,7 @@ export function SiteHeader() {
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-9 h-9 bg-gradient-to-br from-zinc-100 to-zinc-400 rounded-sm" />
-            <span className="text-xl tracking-tight">{siteContent.brand.name}</span>
+            <span className="text-xl tracking-tight">{siteContent.siteName}</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">

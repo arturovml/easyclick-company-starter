@@ -1,4 +1,4 @@
-import { siteContent } from "@/content/site";
+import type { FeatureItem, SectionContent, SectionItem } from "@/content/types";
 
 const iconMap = {
   shield: (
@@ -65,26 +65,36 @@ const iconMap = {
   ),
 };
 
-export function FeaturesGridSection() {
-  const { features } = siteContent;
+type FeaturesGridSectionProps = {
+  section: SectionContent;
+};
+
+const isFeature = (item: SectionItem): item is FeatureItem =>
+  item.kind === "feature";
+
+export function FeaturesGridSection({ section }: FeaturesGridSectionProps) {
+  const items = section.items ?? [];
+  const features = items.filter(isFeature);
 
   return (
     <section id="servicios" className="py-24 lg:py-32">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="max-w-2xl mb-16">
-          <div className="text-xs text-zinc-500 tracking-wider uppercase mb-4">
-            {features.eyebrow}
-          </div>
+          {section.subheading ? (
+            <div className="text-xs text-zinc-500 tracking-wider uppercase mb-4">
+              {section.subheading}
+            </div>
+          ) : null}
           <h2 className="text-4xl lg:text-5xl tracking-tight mb-6">
-            {features.title}
+            {section.heading}
           </h2>
           <p className="text-lg text-zinc-400 leading-relaxed">
-            {features.description}
+            {section.body}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-          {features.items.map((feature) => (
+          {features.map((feature) => (
             <div
               key={feature.title}
               className="bg-zinc-900 border border-zinc-800 rounded-lg p-8 hover:border-zinc-700 transition-colors"
