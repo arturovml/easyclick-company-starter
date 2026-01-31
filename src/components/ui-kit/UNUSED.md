@@ -1,14 +1,7 @@
-# UI inventory (unused)
+# UI kit catalog (unused)
 
-Nota:
-- `ui-kit` = catálogo completo (shadcn/ui)
-- `ui` = componentes promovidos y usados por el sitio
-
-Auditoría realizada sobre `/src` buscando imports que contengan:
-`@/components/ui`, `@/components/ui-kit`,
-o cualquier ruta con `components/ui`. Resultado: **0 imports encontrados**.
-
-Catálogo actual (en `src/components/ui-kit`):
+Catálogo completo de shadcn/ui movido a `src/components/ui-kit`.
+Actualmente no hay imports desde `/src`, por lo que todo el catálogo está sin uso.
 
 - accordion.tsx
 - alert-dialog.tsx
