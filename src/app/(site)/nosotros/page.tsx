@@ -2,8 +2,7 @@ import { CTABlockSection } from "@/components/sections/CTABlockSection";
 import { PageHeroSection } from "@/components/sections/PageHeroSection";
 import { ProcessStepsSection } from "@/components/sections/ProcessStepsSection";
 import { StatsStripSection } from "@/components/sections/StatsStripSection";
-import { nosotrosPageContent } from "@/content/pages";
-import type { SectionContent } from "@/content/types";
+import { getSectionById, nosotrosPageContent } from "@/content/pages";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,13 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const getSection = (id: string) =>
-    nosotrosPageContent.sections.find((section) => section.id === id) as SectionContent;
-
-  const hero = getSection("hero");
-  const stats = getSection("stats");
-  const process = getSection("process");
-  const cta = getSection("cta");
+  const hero = getSectionById(nosotrosPageContent, "hero");
+  const stats = getSectionById(nosotrosPageContent, "stats");
+  const process = getSectionById(nosotrosPageContent, "process");
+  const cta = getSectionById(nosotrosPageContent, "cta");
 
   return (
     <>

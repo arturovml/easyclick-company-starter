@@ -2,8 +2,7 @@ import { CTABlockSection } from "@/components/sections/CTABlockSection";
 import { ContactCardsSection } from "@/components/sections/ContactCardsSection";
 import { ContactFormSection } from "@/components/sections/ContactFormSection";
 import { PageHeroSection } from "@/components/sections/PageHeroSection";
-import { contactoPageContent } from "@/content/pages";
-import type { SectionContent } from "@/content/types";
+import { contactoPageContent, getSectionById } from "@/content/pages";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,13 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-  const getSection = (id: string) =>
-    contactoPageContent.sections.find((section) => section.id === id) as SectionContent;
-
-  const hero = getSection("hero");
-  const form = getSection("form");
-  const cards = getSection("contact-cards");
-  const cta = getSection("cta");
+  const hero = getSectionById(contactoPageContent, "hero");
+  const form = getSectionById(contactoPageContent, "form");
+  const cards = getSectionById(contactoPageContent, "contact-cards");
+  const cta = getSectionById(contactoPageContent, "cta");
 
   return (
     <>

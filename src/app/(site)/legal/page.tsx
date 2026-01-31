@@ -1,6 +1,5 @@
 import { PageHeroSection } from "@/components/sections/PageHeroSection";
-import { legalPageContent } from "@/content/pages";
-import type { SectionContent } from "@/content/types";
+import { getSectionById, legalPageContent } from "@/content/pages";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,10 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function LegalPage() {
-  const getSection = (id: string) =>
-    legalPageContent.sections.find((section) => section.id === id) as SectionContent;
-
-  const hero = getSection("hero");
+  const hero = getSectionById(legalPageContent, "hero");
   const contentSections = legalPageContent.sections.filter(
     (section) => section.id !== "hero",
   );

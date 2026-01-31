@@ -2,8 +2,7 @@ import { CTABlockSection } from "@/components/sections/CTABlockSection";
 import { FeaturesGridSection } from "@/components/sections/FeaturesGridSection";
 import { PageHeroSection } from "@/components/sections/PageHeroSection";
 import { ProcessStepsSection } from "@/components/sections/ProcessStepsSection";
-import { serviciosPageContent } from "@/content/pages";
-import type { SectionContent } from "@/content/types";
+import { getSectionById, serviciosPageContent } from "@/content/pages";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,13 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default function ServicesPage() {
-  const getSection = (id: string) =>
-    serviciosPageContent.sections.find((section) => section.id === id) as SectionContent;
-
-  const hero = getSection("hero");
-  const features = getSection("features");
-  const process = getSection("process");
-  const cta = getSection("cta");
+  const hero = getSectionById(serviciosPageContent, "hero");
+  const features = getSectionById(serviciosPageContent, "features");
+  const process = getSectionById(serviciosPageContent, "process");
+  const cta = getSectionById(serviciosPageContent, "cta");
 
   return (
     <>
