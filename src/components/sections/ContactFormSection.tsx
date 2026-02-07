@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 
-import { siteContent } from "@/content/site";
 import type { FormFieldItem, FormSubmitItem, SectionContent, SectionItem } from "@/content/types";
 
 type ContactFormSectionProps = {
@@ -16,6 +15,7 @@ type FormValues = {
   telefono: string;
   interes: string;
   mensaje: string;
+  website: string;
 };
 
 type FormErrors = Partial<Record<keyof FormValues, string>>;
@@ -32,13 +32,17 @@ const initialValues: FormValues = {
   telefono: "",
   interes: "",
   mensaje: "",
+  website: "",
 };
 
 export function ContactFormSection({ section }: ContactFormSectionProps) {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [mailtoUrl, setMailtoUrl] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle",
+  );
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [devMessage, setDevMessage] = useState<string | null>(null);
 
   const items = useMemo(() => section.items ?? [], [section.items]);
   const fields = items.filter(isField);
@@ -54,6 +58,9 @@ export function ContactFormSection({ section }: ContactFormSectionProps) {
       nextErrors.email = "Email inválido.";
     }
     if (!nextValues.interes.trim()) nextErrors.interes = "Selecciona un interés.";
+    if (nextValues.mensaje.trim().length < 10) {
+      nextErrors.mensaje = "Escribe un mensaje de al menos 10 caracteres.";
+    }
     return nextErrors;
   };
 
@@ -62,32 +69,60 @@ export function ContactFormSection({ section }: ContactFormSectionProps) {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextErrors = validate(values);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    setSubmitted(true);
+    setStatus("loading");
+    setStatusMessage(null);
+    setDevMessage(null);
 
-    const subject = `Contacto ${values.interes} - ${values.empresa}`;
-    const body = [
-      `Nombre: ${values.nombre}`,
-      `Empresa: ${values.empresa}`,
-      `Email: ${values.email}`,
-      `Teléfono: ${values.telefono || "No informado"}`,
-      `Interés: ${values.interes}`,
-      "",
-      values.mensaje,
-    ].join("\n");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: values.nombre,
+          email: values.email,
+          company: values.empresa,
+          phone: values.telefono,
+          message: values.mensaje,
+          source: "contacto",
+          website: values.website,
+        }),
+      });
 
-    const mailto = `mailto:${siteContent.contact.email}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
+      const data = await response.json().catch(() => null);
 
-    setMailtoUrl(mailto);
+      if (response.ok && data?.ok) {
+        setStatus("success");
+        setStatusMessage("Gracias por tu interés. Te contactaremos pronto.");
+        setValues(initialValues);
+        return;
+      }
 
-    // TODO: conectar submit a un API route o webhook real.
+      if (data?.error === "EMAIL_NOT_CONFIGURED") {
+        setStatus("error");
+        setStatusMessage(
+          "No pudimos enviar tu mensaje. Intenta nuevamente más tarde.",
+        );
+        setDevMessage(
+          "El envío de correo no está configurado aún. Configura env vars en Vercel.",
+        );
+        return;
+      }
+
+      setStatus("error");
+      setStatusMessage("No pudimos enviar tu mensaje. Intenta nuevamente.");
+    } catch (error) {
+      console.error("Contact form submit failed", error);
+      setStatus("error");
+      setStatusMessage("No pudimos enviar tu mensaje. Intenta nuevamente.");
+    }
   };
 
   return (
@@ -101,6 +136,18 @@ export function ContactFormSection({ section }: ContactFormSectionProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+          <div className="sr-only" aria-hidden="true">
+            <label htmlFor="contact-website">Website</label>
+            <input
+              id="contact-website"
+              name="website"
+              type="text"
+              autoComplete="off"
+              tabIndex={-1}
+              value={values.website}
+              onChange={(event) => handleChange("website", event.target.value)}
+            />
+          </div>
           <div className="grid gap-6 md:grid-cols-2">
             {fields.map((field) => {
               const id = `contact-${field.name}`;
@@ -194,23 +241,30 @@ export function ContactFormSection({ section }: ContactFormSectionProps) {
           <button
             type="submit"
             className="inline-flex px-6 py-3 bg-zinc-100 text-zinc-950 hover:bg-zinc-200 transition-colors"
+            disabled={status === "loading"}
           >
-            {submitItem?.label ?? "Enviar solicitud"}
+            {status === "loading"
+              ? "Enviando..."
+              : submitItem?.label ?? "Enviar solicitud"}
           </button>
 
-          {submitted ? (
+          {status === "success" ? (
             <div
               role="status"
               className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-emerald-200"
             >
-              <p>Gracias por tu interés. Te contactaremos pronto.</p>
-              {mailtoUrl ? (
-                <a
-                  href={mailtoUrl}
-                  className="mt-2 inline-flex text-sm underline underline-offset-4"
-                >
-                  Enviar también por correo
-                </a>
+              <p>{statusMessage ?? "Gracias por tu interés. Te contactaremos pronto."}</p>
+            </div>
+          ) : null}
+
+          {status === "error" ? (
+            <div
+              role="alert"
+              className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-200"
+            >
+              <p>{statusMessage ?? "No pudimos enviar tu mensaje."}</p>
+              {devMessage ? (
+                <p className="mt-2 text-sm text-red-100/80">{devMessage}</p>
               ) : null}
             </div>
           ) : null}

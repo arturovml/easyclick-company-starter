@@ -105,6 +105,30 @@ Crea un `.env.local` en la raíz:
 NEXT_PUBLIC_SITE_URL=https://tudominio.com
 ```
 
+### Formulario de contacto (Resend)
+
+El endpoint `/api/contact` recibe el formulario, valida datos, aplica honeypot y rate limit, y envía correo usando Resend.
+
+Variables requeridas:
+
+- `RESEND_API_KEY`
+- `CONTACT_FROM_EMAIL`
+- `CONTACT_TO_EMAIL`
+
+Ejemplo de `.env.local` (sin llaves reales):
+
+```env
+RESEND_API_KEY=your_resend_api_key
+CONTACT_FROM_EMAIL=web-no-reply@mail.example.com
+CONTACT_TO_EMAIL=contact@example.com
+```
+
+En Vercel:
+
+1. Project Settings → Environment Variables.
+2. Agrega las tres variables anteriores.
+3. Vuelve a desplegar para aplicar cambios.
+
 ## Cómo usarlo como base para un nuevo cliente
 
 1. Actualiza marca y navegación en `src/content/site.ts`.
