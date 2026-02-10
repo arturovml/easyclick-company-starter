@@ -90,10 +90,20 @@ Flujo recomendado con cliente:
 
 ## Cómo cambiar assets
 
-Los assets públicos están en `public/`.
+### Favicon y Open Graph (App Router)
 
-- Reemplaza imágenes/SVGs manteniendo los mismos nombres si quieres evitar cambios de código.
-- Recomendado: `public/og.png` y `public/favicon.ico` (o equivalente) para branding.
+Next.js detecta estos archivos automaticamente en `src/app/` y los enlaza en el `<head>`. No hace falta declararlos en `layout.tsx` (salvo que quieras metadata extra como title/description).
+
+- `src/app/favicon.ico` — favicon (solo en la raiz de app/).
+- `src/app/icon.svg` o `src/app/icon.png` — icono adicional (no usar `favicon.svg`).
+- `src/app/apple-icon.png` — icono para Apple / guardar en inicio (no `apple-touch-icon.png`).
+- `src/app/opengraph-image.png` — imagen para redes y previews, ej. WhatsApp (1200x630 px recomendado; no `og.png`).
+
+### Resto de assets
+
+Los assets publicos (logos, imagenes de secciones, etc.) siguen en `public/`.
+
+- Reemplaza imagenes/SVGs manteniendo los mismos nombres si quieres evitar cambios de codigo.
 
 ## Variables de entorno (opcional)
 
@@ -133,7 +143,7 @@ En Vercel:
 
 1. Actualiza marca y navegación en `src/content/site.ts`.
 2. Ajusta contenido por página en `src/content/pages/`.
-3. Reemplaza assets en `public/` (logo, og, favicon).
+3. Reemplaza favicon e imagen OG en `src/app/` con los nombres de convencion anteriores, y logos/imagenes en `public/`.
 4. (Opcional) Define `NEXT_PUBLIC_SITE_URL`.
 5. Corre `npm run build` para validar antes de entregar.
 
